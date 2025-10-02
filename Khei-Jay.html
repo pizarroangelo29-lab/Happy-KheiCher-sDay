@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEMBot Club Teachers' Day Puzzle - Coach Kniethel</title>
+<meta name="description" content="Happy Teachers' Day to Coach Kniethel from STEMBot Club! Solve the puzzles to reveal special messages.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { 
+    background: linear-gradient(135deg, #0d0d0d, #1a1a1a); 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    text-align: center; 
+    min-height: 100vh;
+    color: white;
+    padding: 20px;
+  }
+  h1 { 
+    color: #ffcc00; 
+    margin: 20px 0; 
+    text-shadow: 0 0 10px #1565c0, 0 0 20px #ff8c00;
+    font-size: 2rem;
+  }
+  .banner { 
+    background: linear-gradient(90deg, #1565c0, #ff8c00); 
+    padding: 15px; 
+    font-size: 1.3rem; 
+    font-weight: bold; 
+    color: white; 
+    text-shadow: 0 0 8px black; 
+    box-shadow: 0 3px 15px rgba(0,0,0,0.6); 
+    border-bottom: 3px solid #fff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  #board { 
+    width: 240px; 
+    height: 240px; 
+    margin: 30px auto; 
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: repeat(2, 1fr); 
+    gap: 3px; 
+    background: #000;
+    border-radius: 10px;
+    padding: 3px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+  }
+  .tile { 
+    border: 3px solid #1565c0; 
+    border-radius: 6px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6), inset 0 0 8px rgba(255,255,255,0.2); 
+    background-size: 240px 240px; 
+    cursor: grab; 
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .tile:active { cursor: grabbing; }
+  .tile:hover { 
+    transform: scale(1.05); 
+    box-shadow: 0 6px 16px rgba(255,140,0,0.8), inset 0 0 12px rgba(255,204,0,0.6);
+    border-color: #ff8c00;
+    z-index: 10;
+  }
+  .tile.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  #message { 
+    display: none; 
+    margin: 20px auto; 
+    font-size: 1.2rem; 
+    color: #ffcc00;
+    max-width: 600px;
+    padding: 15px;
+    background: rgba(255,140,0,0.2);
+    border-radius: 10px;
+    border: 2px solid #ff8c00;
+    line-height: 1.6;
+  }
+  #nextBtn { 
+    display: none; 
+    background: linear-gradient(135deg, #1565c0, #0d47a1); 
+    color: white; 
+    border: none; 
+    padding: 15px 35px; 
+    margin-top: 20px; 
+    border-radius: 25px; 
+    font-size: 18px; 
+    font-weight: bold;
+    cursor: pointer; 
+    box-shadow: 0 4px 15px rgba(255,140,0,0.4);
+    transition: all 0.3s ease;
+  }
+  #nextBtn:hover { 
+    background: linear-gradient(135deg, #ff8c00, #f57c00); 
+    box-shadow: 0 6px 20px rgba(21,101,192,0.6);
+    transform: translateY(-2px);
+  }
+  #nextBtn:active {
+    transform: translateY(0);
+  }
+  .progress {
+    color: #ffcc00;
+    font-size: 1.1rem;
+    margin: 10px 0;
+    font-weight: bold;
+  }
+  body::before { 
+    content: ""; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    border: 8px solid transparent; 
+    border-image: linear-gradient(90deg, #1565c0, #ff8c00, #ffffff, #1565c0) 1; 
+    animation: ledGlow 3s infinite linear; 
+    pointer-events: none;
+    z-index: 1000;
+  }
+  @keyframes ledGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.5); }
+  }
+  .robot-float { 
+    position: fixed; 
+    width: 60px; 
+    height: 60px; 
+    background: radial-gradient(circle, #ff8c00, #1565c0);
+    border-radius: 10px;
+    animation: floatUp 12s linear infinite; 
+    opacity: 0; 
+    z-index: -1;
+  }
+  .robot-float::before {
+    content: "🤖";
+    font-size: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .robot1 { left: 15%; animation-delay: 0s; }
+  .robot2 { left: 45%; animation-delay: 4s; }
+  .robot3 { left: 75%; animation-delay: 8s; }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-20vh) scale(1) rotate(360deg); opacity: 0; }
+  }
+  @media (max-width: 480px) {
+    h1 { font-size: 1.5rem; }
+    .banner { font-size: 1rem; padding: 10px; }
+    #board { width: 200px; height: 200px; }
+    .tile { background-size: 200px 200px !important; }
+    #message { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="banner">🎉 Happy Teachers' Day from STEMBot Club 🎉</div>
+<h1>Kots Kniethel & STEMBot Club</h1>
+<div class="progress" id="progress">Puzzle 1 of 15</div>
+
+<div id="board"></div>
+<div id="message"></div>
+<button id="nextBtn">Next Puzzle →</button>
+
+<div class="robot-float robot1"></div>
+<div class="robot-float robot2"></div>
+<div class="robot-float robot3"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+const puzzleMessages = [
+  "Kent: We love how you somehow manage to deal with our collective braincells all 3 of them, and still not quit your job 🫣🫶 That’s real STRENGTH. Thank you for believing in us, teaching us to push past errors syntax or emotional breakdowns 😭, and for being the real MVP behind every little win we get. THANKS AND LHOVE YOUH MOWM MESTIZA😍🥰😍🥰",
+  "Reindel: Coding wizard, champion maker—here comes KOTS KNIETHEL!",
+  "Edrian: Happy Teacher’s Day, ma'am khei!! Thank you for guiding us, pushing us to be our best, and inspiring us in the robotics and automation competition. We are so grateful for your patience, discipline, and encouragement!",
+  "Jaurel: Happy Teacher's Day ma'am Kniethel! Thank for the opportunity to join robolution and for the support and guidance, sana makakabawi next g HAHAHAHA!",
+  "Jeru: Debugging struggles, installing success—COACH KNIETHEL!",
+  "Justin: Happy teachers' day, ma'am k. Thank you for guiding us this year's ilocos regional robolution and more kulitan to come",
+  "Lien: Plus points chem Maam, baka naman",
+  "Mark: A happy happy teacher's day to  a special friend/coach, ikaw yun maam k, may this day be full of surprises and blessings, words cannot express my sincere thanks for your support and cheers. Sanaol happy, enjoy ur dayy maam!",
+  "Niño: Happy Teacher's Day ma'am Kniethel. Thank you for your support and guidance, more siksikan sa sasakyan and kulitan to come",
+  "Veyonce: Salamat nhay sa iyong mga sakripisyo para saming mga sakit ulo mho. Sana mabuntis ka na, sana maikasal ka na. Go go go Rencio-Rabara-Santiago 🏆. Kidding aside, I hope every single sacrifices of yours will comeback to you in greater measures.",
+  "Kiella: The power source of the Robotics team—COACH KNIETHEL!",
+  "Czyrelle: happy teachers day coach K, sending pregnancy dust",
+  "Rhemgell: From circuits to championships—COACH KNIETHEL delivers!",
+  "Zithri: Akin na hollow blockz mem nitel.",
+  "Angelo: pi teachers day, kots!! waiting kay adroid 18 & 19"
+];
+
+const puzzleImages = [
+  "https://i.postimg.cc/3rHQGTm5/Khei1.jpg",
+  "https://i.postimg.cc/267cvPR0/Khei10.jpg",
+  "https://i.postimg.cc/cHSkvdjj/Khei11.jpg",
+  "https://i.postimg.cc/qRxbn9VY/Khei12.jpg",
+  "https://i.postimg.cc/V6WGM3QG/Khei13.jpg",
+  "https://i.postimg.cc/wvQfJS8r/Khei14.jpg",
+  "https://i.postimg.cc/W3wWrQcL/Khei15.jpg",
+  "https://i.postimg.cc/5xHhk0Sn/Khei2.jpg",
+  "https://i.postimg.cc/nHsywzGG/Khei3.jpg",
+  "https://i.postimg.cc/mbcv6Dyj/Khei4.jpg",
+  "https://i.postimg.cc/26D91CJq/Khei5.jpg",
+  "https://i.postimg.cc/Ssh1nm5d/Khei6.jpg",
+  "https://i.postimg.cc/d1YNhJXN/Khei7.jpg",
+  "https://i.postimg.cc/XJb1rnhD/Khei8.jpg",
+  "https://i.postimg.cc/d1YNhJXB/Khei9.jpg"
+];
+
+const board = document.getElementById("board");
+const message = document.getElementById("message");
+const nextBtn = document.getElementById("nextBtn");
+const progress = document.getElementById("progress");
+
+let currentPuzzle = 0;
+let draggedTile = null;
+
+progress.textContent = `Puzzle 1 of ${puzzleImages.length}`;
+loadPuzzle();
+
+function loadPuzzle() {
+  board.innerHTML = "";
+  message.style.display = "none";
+  nextBtn.style.display = "none";
+  progress.textContent = `Puzzle ${currentPuzzle + 1} of ${puzzleImages.length}`;
+
+  const imgURL = puzzleImages[currentPuzzle];
+  const size = window.innerWidth < 480 ? 200 : 240;
+  const tileSize = size / 2;
+  let tiles = [];
+
+  for (let r = 0; r < 2; r++) {
+    for (let c = 0; c < 2; c++) {
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
+      tile.style.width = tileSize + "px";
+      tile.style.height = tileSize + "px";
+      tile.style.backgroundImage = `url(${imgURL})`;
+      tile.style.backgroundPosition = `-${c * tileSize}px -${r * tileSize}px`;
+      tile.dataset.correct = r * 2 + c;
+      tile.draggable = true;
+      tiles.push(tile);
+    }
+  }
+
+  shuffleArray(tiles);
+  tiles.forEach(t => board.appendChild(t));
+
+  tiles.forEach(tile => {
+    tile.addEventListener("dragstart", handleDragStart);
+    tile.addEventListener("dragend", handleDragEnd);
+    tile.addEventListener("dragover", handleDragOver);
+    tile.addEventListener("drop", handleDrop);
+    tile.addEventListener("dragenter", handleDragEnter);
+    tile.addEventListener("dragleave", handleDragLeave);
+    
+    tile.addEventListener("touchstart", handleTouchStart, {passive: false});
+    tile.addEventListener("touchmove", handleTouchMove, {passive: false});
+    tile.addEventListener("touchend", handleTouchEnd, {passive: false});
+  });
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function handleDragStart(e) {
+  draggedTile = this;
+  this.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+}
+
+function handleDragEnd() {
+  this.classList.remove("dragging");
+  document.querySelectorAll(".tile").forEach(t => t.classList.remove("drag-over"));
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+}
+
+function handleDragEnter() {
+  if (this !== draggedTile) {
+    this.classList.add("drag-over");
+  }
+}
+
+function handleDragLeave() {
+  this.classList.remove("drag-over");
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  if (this !== draggedTile) {
+    swapTiles(draggedTile, this);
+  }
+  this.classList.remove("drag-over");
+}
+
+let touchStartTile = null;
+function handleTouchStart(e) {
+  e.preventDefault();
+  touchStartTile = this;
+  this.classList.add("dragging");
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+}
+
+function handleTouchEnd(e) {
+  e.preventDefault();
+  this.classList.remove("dragging");
+  const touch = e.changedTouches[0];
+  const endElement = document.elementFromPoint(touch.clientX, touch.clientY);
+  
+  if (endElement && endElement.classList.contains("tile") && endElement !== touchStartTile) {
+    swapTiles(touchStartTile, endElement);
+  }
+  touchStartTile = null;
+}
+
+function swapTiles(tile1, tile2) {
+  const allTiles = Array.from(board.children);
+  const index1 = allTiles.indexOf(tile1);
+  const index2 = allTiles.indexOf(tile2);
+  
+  if (index1 < index2) {
+    board.insertBefore(tile1, tile2.nextSibling);
+  } else {
+    board.insertBefore(tile1, tile2);
+  }
+  
+  checkWin();
+}
+
+function checkWin() {
+  const children = Array.from(board.children);
+  const won = children.every((t, i) => parseInt(t.dataset.correct) === i);
+  
+  if (won) {
+    message.textContent = `🎉 ${puzzleMessages[currentPuzzle]} 🎉`;
+    message.style.display = "block";
+    nextBtn.style.display = "inline-block";
+    
+    if (typeof confetti !== 'undefined') {
+      confetti({ 
+        particleCount: 200, 
+        spread: 100, 
+        origin: { y: 0.6 },
+        colors: ['#1565c0', '#ff8c00', '#ffcc00']
+      });
+    }
+    
+    try {
+      new Audio("https://actions.google.com/sounds/v1/crowds/cheer.ogg").play();
+    } catch (e) {
+      console.log("Audio playback not available");
+    }
+  }
+}
+
+nextBtn.addEventListener("click", () => {
+  currentPuzzle++;
+  if (currentPuzzle < puzzleImages.length) {
+    loadPuzzle();
+  } else {
+    message.textContent = "🎉 All puzzles solved! Happy Teachers' Day, Kots Kniethel! 🎉";
+    nextBtn.style.display = "none";
+    progress.textContent = "🏆 Champion! All Puzzles Complete!";
+    if (typeof confetti !== 'undefined') {
+      confetti({ 
+        particleCount: 300, 
+        spread: 120, 
+        origin: { y: 0.5 },
+        colors: ['#1565c0', '#ff8c00', '#ffcc00', '#4caf50']
+      });
+    }
+  }
+});
+</script>
+</body>
+</html>
